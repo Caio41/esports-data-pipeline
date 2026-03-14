@@ -9,11 +9,13 @@ if league == 'All':
 
 df = team_stats(league)
 
-st.dataframe(df)
-
+st.subheader('Top 10 Teams by Win Rate')
 
 st.bar_chart(
     df.head(10),
     x="teamname",
-    y="winrate"
+    y="winrate",
+    sort=False
 )
+
+st.dataframe(df)

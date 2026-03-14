@@ -1,17 +1,42 @@
 import streamlit as st 
 
+st.set_page_config(
+    page_title='LoL Esports Analytics',
+    layout='wide'
+)
+
 st.title("LoL Esports Analytics Dashboard")
 
-st.markdown("""
-Data pipeline para análise de partidas profissionais de League of Legends.
+tab_pt, tab_en = st.tabs(['Português', 'English'])
 
-Stack do projeto:
+with tab_pt:
 
-- **Spark** → ETL
-- **Airflow** → Orquestração
-- **DuckDB** → Database
-- **Streamlit** → Dashboard
-            
+    st.markdown("""
+    ### Pipeline de dados para análise de partidas profissionais de League of Legends.
 
-Acesse os dashboards através do menu na esquerda.
-""")
+    **Stack do projeto**:
+
+    - **Spark** → ETL
+    - **Airflow** → Orquestração
+    - **DuckDB** → Database
+    - **Streamlit** → Dashboard
+                
+
+    Acesse os dashboards através do menu na esquerda.
+    """)
+
+
+with tab_en:
+     st.markdown("""
+    ### Data pipeline for professional League of Legends match analysis.
+
+    **Project Stack**:
+
+    - **Spark** → ETL
+    - **Airflow** → Orchestration
+    - **DuckDB** → Database
+    - **Streamlit** → Dashboard
+                
+
+    Access the dashboards through the menu on the left.
+    """)
