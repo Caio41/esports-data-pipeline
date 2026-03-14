@@ -9,9 +9,16 @@ with DAG(
     catchup=False,
 ) as dag:
 
-    run_spark_etl = BashOperator(
-        task_id='run_spark_etl',
-        bash_command='python /opt/airflow/etl/spark_jobs.py /opt/airflow/data/raw/2026_LoL_esports_match_data_from_OraclesElixir.csv /opt/airflow/data/processed'
+    output_file = '/opt/airflow/data/raw/{{ds}}-LoLEsportsMatchData.csv'
+
+    ingest_data = BashOperator(
+        task_id='ingest_data',
+        bash_command=f'python /opt/airflow/etl/ingest.py {output_file}'
     )
 
-    run_spark_etl
+    run_spark_etl = BashOperator(
+        task_id='run_spark_etl',
+        bash_command="python /opt/airflow/etl/spark_jobs.py {{task_instance.xcom_pull(task_ids='ingest_data')}} /opt/airflow/data/processed"
+    )
+
+    ingest_data >> run_spark_etl
