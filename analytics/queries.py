@@ -1,7 +1,9 @@
 import duckdb 
 
+
+con = duckdb.connect()
+
 def champion_winrate(league: str | None = None):
-    con = duckdb.connect()
     query = '''
         SELECT champion, AVG(result) AS winrate, COUNT(*) AS games
         FROM 'data/processed/fact_player_matches.parquet'
@@ -22,7 +24,6 @@ def champion_winrate(league: str | None = None):
 
 
 def player_stats(league: str | None = None):
-    con = duckdb.connect()
     query = '''
         SELECT playername, COUNT(*) AS games, 
         AVG(result) AS winrate,
@@ -49,8 +50,6 @@ def player_stats(league: str | None = None):
 
 
 def team_stats(league: str | None = None):
-    con = duckdb.connect()
-
     query = '''
         SELECT
             teamname,
@@ -79,8 +78,6 @@ def team_stats(league: str | None = None):
 
 
 def avg_game_time(league: str | None = None):
-    con = duckdb.connect()
-
     query = '''
         SELECT league, AVG(gamelength_seconds) / 60 AS avg_game_minutes
         FROM 'data/processed/dim_match.parquet'
@@ -101,8 +98,6 @@ def avg_game_time(league: str | None = None):
 
 
 def winrate_by_side(league: str | None = None):
-    con = duckdb.connect()
-
     query = '''
         SELECT side, AVG(result) AS winrate, COUNT(*) AS games
         FROM 'data/processed/fact_team_matches.parquet'
