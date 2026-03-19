@@ -104,6 +104,30 @@ services:
       start_period: 5s
     restart: always
 
+  spark-master:
+    image: apache/spark:3.5.8
+    command: >
+      /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
+    ports:
+      - "9090:8080"
+      - "7077:7077"
+    volumes:
+      - ${AIRFLOW_PROJ_DIR:-.}/etl:/opt/airflow/etl
+      - ${AIRFLOW_PROJ_DIR:-.}/data:/opt/airflow/data
+    user: root
+
+  spark-worker:
+    image: apache/spark:3.5.8
+    command: >
+      /opt/spark/bin/spark-class
+      org.apache.spark.deploy.worker.Worker
+      spark://spark-master:7077
+    volumes:
+      - ${AIRFLOW_PROJ_DIR:-.}/etl:/opt/airflow/etl
+      - ${AIRFLOW_PROJ_DIR:-.}/data:/opt/airflow/data
+    depends_on: 
+      - spark-master
+    user: root
 
   airflow-apiserver:
     <<: *airflow-common
