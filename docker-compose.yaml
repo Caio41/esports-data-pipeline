@@ -137,6 +137,17 @@ services:
     depends_on: 
       - spark-master
 
+  streamlit:
+    build: 
+      context: .
+      dockerfile: ./dashboard/Dockerfile
+    ports: 
+      - "8501:8501"
+    volumes:
+      - ./data:/app/data
+      - ./dashboard:/app
+
+
   airflow-apiserver:
     <<: *airflow-common
     command: api-server
