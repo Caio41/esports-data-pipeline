@@ -2,7 +2,7 @@ import sys
 
 from pyspark.sql import SparkSession 
 
-from etl.transform import transform_match_dim, transform_player_matches, transform_team_matches
+from transform import transform_match_dim, transform_player_matches, transform_team_matches
 
 
 def run_spark_etl(raw_path: str, processed_data_path: str):
