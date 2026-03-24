@@ -63,7 +63,7 @@ x-airflow-common:
     AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
     AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
     AIRFLOW__CORE__FERNET_KEY: ''
-    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'false'
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__CORE__EXECUTION_API_SERVER_URL: 'http://airflow-apiserver:8080/execution/'
     # yamllint disable rule:line-length
@@ -78,9 +78,7 @@ x-airflow-common:
     AIRFLOW_CONFIG: '/opt/airflow/config/airflow.cfg'
   volumes:
     - ${AIRFLOW_PROJ_DIR:-.}/orchestration/dags:/opt/airflow/dags
-    - ${AIRFLOW_PROJ_DIR:-.}/orchestration/logs:/opt/airflow/logs
     - ${AIRFLOW_PROJ_DIR:-.}/orchestration/config:/opt/airflow/config
-    - ${AIRFLOW_PROJ_DIR:-.}/orchestration/plugins:/opt/airflow/plugins
     - ${AIRFLOW_PROJ_DIR:-.}/processing/etl:/opt/airflow/etl
     - ${AIRFLOW_PROJ_DIR:-.}/data:/opt/airflow/data
     - ${AIRFLOW_PROJ_DIR:-.}/requirements.txt:/opt/airflow/requirements.txt
@@ -88,6 +86,8 @@ x-airflow-common:
   depends_on:
     &airflow-common-depends-on
     postgres:
+      condition: service_healthy
+    spark-master:
       condition: service_healthy
 
 services:
@@ -120,6 +120,12 @@ services:
     volumes:
       - ${AIRFLOW_PROJ_DIR:-.}/processing/etl:/opt/airflow/etl
       - ${AIRFLOW_PROJ_DIR:-.}/data:/opt/airflow/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
 
   spark-worker:
     build:
